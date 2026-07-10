@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Career Agent Stack Setup</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #64717d;
+      --line: #d8e0e6;
+      --bg: #f7f9fb;
+      --panel: #ffffff;
+      --accent: #0f766e;
+      --accent-soft: #eef5f4;
+      --accent-2: #334155;
+      --code: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 28px 24px;
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+    }
+    nav {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    nav a {
+      display: block;
+      color: var(--accent-2);
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    nav a:hover { background: var(--accent-soft); color: var(--accent); }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      max-width: 1120px;
+      margin: 0 auto 8px;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+    header p {
+      max-width: 1120px;
+      margin: 0 auto;
+      color: var(--muted);
+    }
+    h2 { margin: 0 0 10px; font-size: 20px; }
+    h3 { margin: 18px 0 8px; font-size: 16px; }
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 16px 0 6px;
+      font-size: 14px;
+    }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      font: inherit;
+      background: #fff;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .hint { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .checklist {
+      padding-left: 18px;
+      color: var(--accent-2);
+    }
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .stage {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcfd;
+      min-height: 104px;
+    }
+    .stage strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+    .stage span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .script {
+      background: #f8fafc;
+      border-left: 4px solid var(--accent);
+      padding: 14px;
+      color: var(--accent-2);
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    button {
+      border: 0;
+      background: var(--accent);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: #e2e8f0;
+      color: var(--ink);
+    }
+    pre {
+      background: var(--code);
+      color: #e5e7eb;
+      padding: 14px;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 13px;
+    }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; padding: 16px; }
+      nav { position: static; }
+      .pipeline { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Career Agent Stack Setup</h1>
+    <p>This setup guide explains the framework, then collects the information the agent orchestrator needs to run a structured career workflow.</p>
+  </header>
+
+  <main>
+    <nav>
+      <a href="#overview">Overview</a>
+      <a href="#framework">Framework</a>
+      <a href="#script">Setup Script</a>
+      <a href="#identity">Identity</a>
+      <a href="#source">Source Truth</a>
+      <a href="#targets">Target Roles</a>
+      <a href="#rules">Rules</a>
+      <a href="#documents">Documents</a>
+      <a href="#interface">Interface</a>
+      <a href="#next">Next Steps</a>
+    </nav>
+
+    <div>
+      <section id="overview">
+        <h2>1. What This Stack Does</h2>
+        <p>The stack is a career production line. It helps a user search for jobs, evaluate fit, tailor materials, track applications, create warm-path outreach, and prepare follow-ups. It does not submit applications or send messages without approval.</p>
+        <ul class="checklist">
+          <li>Profile Builder turns source materials into verified career truth.</li>
+          <li>Target Strategy defines the market, role lanes, filters, and deal breakers.</li>
+          <li>Opportunity Scout finds and filters roles.</li>
+          <li>JD Analyst extracts requirements, keywords, and risks.</li>
+          <li>Match Scorer estimates ATS, cold interview, and warm-path probabilities.</li>
+          <li>Resume Tailor creates role-specific drafts from the included template.</li>
+          <li>Application Assistant prepares answer drafts and application packets.</li>
+          <li>Warm Path Builder drafts referral and recruiter messages.</li>
+          <li>Tracker And Follow-Up keeps next actions visible.</li>
+        </ul>
+      </section>
+
+      <section id="framework">
+        <h2>2. Agent Production Line</h2>
+        <p>Each stage has a bounded job. The orchestrator moves work from one stage to the next so the user can see what is happening and approve the high-impact decisions.</p>
+        <div class="pipeline">
+          <div class="stage"><strong>1. Setup Orchestrator</strong><span>Explains the stack, creates config files, and sets approval boundaries.</span></div>
+          <div class="stage"><strong>2. Profile Builder</strong><span>Builds a source-of-truth profile from verified resume and portfolio facts.</span></div>
+          <div class="stage"><strong>3. Target Strategy</strong><span>Defines titles, industries, compensation, location, and career-change lanes.</span></div>
+          <div class="stage"><strong>4. Opportunity Scout</strong><span>Finds, ingests, filters, and deduplicates job opportunities.</span></div>
+          <div class="stage"><strong>5. JD Analyst</strong><span>Extracts requirements, seniority signals, keywords, and posting risks.</span></div>
+          <div class="stage"><strong>6. Match Scorer</strong><span>Ranks roles by ATS Match %, Cold Interview %, Warm Path %, and Overall Fit.</span></div>
+          <div class="stage"><strong>7. Resume Tailor</strong><span>Creates truthful role-specific resumes using the local neutral template.</span></div>
+          <div class="stage"><strong>8. Application Assistant</strong><span>Drafts form answers, cover notes, and packet checklists for review.</span></div>
+          <div class="stage"><strong>9. Warm Path Builder</strong><span>Finds referral angles and drafts user-approved outreach.</span></div>
+          <div class="stage"><strong>10. Tracker And Follow-Up</strong><span>Updates statuses, follow-up dates, outcomes, and next actions.</span></div>
+          <div class="stage"><strong>11. Interview Prep</strong><span>Turns each target role into talking points, story banks, and questions.</span></div>
+          <div class="stage"><strong>12. Learning Loop</strong><span>Uses outcomes to improve the next search, scoring, and resume pass.</span></div>
+        </div>
+      </section>
+
+      <section id="script">
+        <h2>3. What The Orchestrator Should Say</h2>
+        <p>The setup experience should feel deliberate. The agent should explain the system before asking for personal information.</p>
+        <div class="script">Welcome. This stack is a career production line, not a one-off resume generator.
+
+We will set up your source truth first, then define your target market, then use agents to search, score, tailor, track, and follow up.
+
+The agent can search for roles, estimate ATS and interview probability, draft resumes, prepare application answers, and organize follow-ups.
+
+The agent will not submit applications, send messages, invent experience, or overwrite your source truth without your approval.
+
+You can use local files, Google Drive, or both. The default resume template is included in this folder, so you do not need access to anyone else's Drive.
+
+Setup can be completed in stages. Blank answers are allowed. Anything we create can be edited later.</div>
+      </section>
+
+      <section id="identity">
+        <h2>4. Identity And Contact</h2>
+        <label>Full name</label>
+        <input id="name" value="Lorem Ipsum">
+        <label>Email</label>
+        <input id="email" value="lorem.ipsum@example.com">
+        <label>Phone</label>
+        <input id="phone" value="+1-555-0100">
+        <label>Location</label>
+        <input id="location" value="City, State, Country">
+        <label>LinkedIn</label>
+        <input id="linkedin" value="linkedin.com/in/loremipsum">
+        <label>Portfolio or website</label>
+        <input id="portfolio" value="https://example.com">
+      </section>
+
+      <section id="source">
+        <h2>5. Source Truth</h2>
+        <p>The agent should use verified source truth before tailoring any resume or answer.</p>
+        <label>How will the user provide source truth?</label>
+        <select id="sourceMethod">
+          <option>Paste resume text</option>
+          <option>Use a local file</option>
+          <option>Use a Google Doc</option>
+          <option>Use LinkedIn and portfolio links</option>
+        </select>
+        <label>Notes for the agent</label>
+        <textarea id="sourceNotes">Lorem ipsum source notes. Replace with verified career facts.</textarea>
+      </section>
+
+      <section id="targets">
+        <h2>6. Target Roles</h2>
+        <label>Primary target titles</label>
+        <textarea id="roles">Senior Role Title, Lead Role Title, Manager Role Title</textarea>
+        <label>Career-change roles</label>
+        <textarea id="careerChange">Adjacent Role Title, Stretch Role Title</textarea>
+        <label>Roles to avoid</label>
+        <textarea id="avoid">Junior roles, commission-only roles</textarea>
+      </section>
+
+      <section id="rules">
+        <h2>7. Location, Compensation, And Approval Rules</h2>
+        <label>Location preference</label>
+        <select id="remote">
+          <option>Remote only</option>
+          <option>Remote preferred</option>
+          <option>Hybrid acceptable</option>
+          <option>On-site acceptable</option>
+        </select>
+        <label>Minimum compensation</label>
+        <input id="minComp" placeholder="$120K">
+        <label>Target compensation</label>
+        <input id="targetComp" placeholder="$160K-$220K">
+        <p class="hint">Default approval rule: the agent may search, score, draft, and organize, but may not submit applications or send outreach without approval.</p>
+      </section>
+
+      <section id="documents">
+        <h2>8. Documents And Google Drive</h2>
+        <label>Output destination</label>
+        <select id="destination">
+          <option>Local folder only</option>
+          <option>Google Drive only</option>
+          <option>Both local and Google Drive</option>
+        </select>
+        <label>Google Drive folder URL</label>
+        <input id="drive" placeholder="https://drive.google.com/drive/folders/...">
+        <label>Resume template</label>
+        <input id="template" value="templates/neutral-google-doc-resume-template.docx">
+        <p class="hint">The template above is included in this product folder. A user does not need access to the creator's Drive.</p>
+      </section>
+
+      <section id="interface">
+        <h2>9. Interface Mode</h2>
+        <p>The user can keep the workflow entirely in text chat, or run the optional dashboard as a visual command center alongside chat.</p>
+        <label>Preferred interface</label>
+        <select id="interfaceMode">
+          <option>Chat only</option>
+          <option>Dashboard + chat</option>
+        </select>
+        <p class="hint">The dashboard lives in the optional <code>dashboard/</code> folder and can be removed later without breaking the core text-chat workflow.</p>
+      </section>
+
+      <section id="next">
+        <h2>10. Next Steps</h2>
+        <p>Use this page as the user-friendly setup guide. Use the terminal wizard to generate config files.</p>
+        <pre>npm run setup
+npm run verify
+npm install --prefix dashboard
+npm run dashboard</pre>
+        <div class="actions">
+          <button id="save">Save Browser Draft</button>
+          <button class="secondary" id="download">Download Setup Notes</button>
+        </div>
+        <p class="hint" id="status"></p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const fields = ["name","email","phone","location","linkedin","portfolio","sourceMethod","sourceNotes","roles","careerChange","avoid","remote","minComp","targetComp","destination","drive","template","interfaceMode"];
+    function collect() {
+      const data = {};
+      for (const id of fields) data[id] = document.getElementById(id).value;
+      return data;
+    }
+    function restore() {
+      const raw = localStorage.getItem("careerAgentSetupDraft");
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      for (const id of fields) if (data[id] !== undefined) document.getElementById(id).value = data[id];
+    }
+    document.getElementById("save").addEventListener("click", () => {
+      localStorage.setItem("careerAgentSetupDraft", JSON.stringify(collect(), null, 2));
+      document.getElementById("status").textContent = "Draft saved in this browser.";
+    });
+    document.getElementById("download").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(collect(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "career-agent-setup-notes.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+    restore();
+  </script>
+</body>
+</html>

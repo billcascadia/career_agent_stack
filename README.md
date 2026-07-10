@@ -1,5 +1,4 @@
-# career_agent_stack
-Welcome To Career Agent Stack Career Agent Stack is a local-first job search system. Think of it as a production line for your career search.
+# Career Agent Stack
 
 A consumer-ready agentic career workflow for finding, evaluating, tailoring, tracking, and following up on job opportunities.
 

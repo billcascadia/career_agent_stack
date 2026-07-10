@@ -1,0 +1,44 @@
+documents:
+  output_destination: "local"
+  local_output_folder: "outputs"
+  google_drive_enabled: false
+  google_drive_folder_url: ""
+  resume_template: "templates/neutral-google-doc-resume-template.docx"
+  fallback_markdown_template: "templates/resume-template-lorem.md"
+  export_formats:
+    - "google_doc"
+    - "pdf"
+
+interface:
+  mode: "chat_only"
+  dashboard_enabled: false
+  dashboard_path: "dashboard"
+  dashboard_notes: "Optional. Use chat_only unless the user wants a visual command center."
+
+search:
+  cadence: "manual"
+  remote_preference: "remote only"
+  countries:
+    - "United States"
+  states_or_regions: []
+  minimum_compensation: ""
+  target_compensation: ""
+  employment_type: "full-time"
+  include_career_change_roles: true
+  preferred_sources:
+    - "Employer career sites"
+    - "LinkedIn"
+    - "Indeed"
+  max_daily_applications: 5
+
+approval_rules:
+  allow_auto_search: true
+  allow_auto_resume_drafts: true
+  allow_auto_outreach_drafts: true
+  allow_auto_submit_applications: false
+  allow_auto_send_messages: false
+
+scoring:
+  minimum_ats_for_resume: 70
+  minimum_overall_fit_for_application: 3.8
+  prioritize_warm_path: true

@@ -1,0 +1,52 @@
+candidate:
+  full_name: "Lorem Ipsum"
+  email: "lorem.ipsum@example.com"
+  phone: "+1-555-0100"
+  location: "City, State, Country"
+  linkedin: "linkedin.com/in/loremipsum"
+  portfolio_url: "https://example.com"
+  github: ""
+  work_authorization: "Needs user confirmation"
+
+source_materials:
+  method: "paste"
+  location_or_notes: "Lorem ipsum source material location or notes."
+  verified_notes: "Lorem ipsum verified achievements and proof points."
+  claims_to_avoid:
+    - "Anything not verified by the user"
+
+target_roles:
+  primary:
+    - "Senior Role Title"
+    - "Lead Role Title"
+    - "Manager Role Title"
+  career_change:
+    - "Adjacent Role Title"
+    - "Stretch Role Title"
+  avoid:
+    - "Role type to avoid"
+  archetypes:
+    - name: "Primary Archetype"
+      level: "Senior"
+      fit: "primary"
+    - name: "Adjacent Archetype"
+      level: "Mid-Senior"
+      fit: "secondary"
+
+narrative:
+  headline: "Lorem ipsum professional headline"
+  exit_story: "Lorem ipsum career transition or job-search narrative."
+  superpowers:
+    - "Lorem ipsum strength one"
+    - "Lorem ipsum strength two"
+    - "Lorem ipsum strength three"
+  proof_points:
+    - name: "Lorem Project"
+      url: "https://example.com/project"
+      hero_metric: "Lorem ipsum measurable result"
+
+source_truth_rules:
+  never_claim:
+    - "Anything not verified by the user"
+  needs_confirmation:
+    - "Specific metric, credential, or work authorization detail"

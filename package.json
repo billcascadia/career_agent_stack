@@ -1,0 +1,22 @@
+{
+  "name": "career-agent-stack",
+  "version": "0.1.0",
+  "description": "Consumer-ready agentic career workflow stack",
+  "type": "module",
+  "scripts": {
+    "setup": "node scripts/setup-wizard.mjs",
+    "verify": "node scripts/verify-stack.mjs",
+    "dashboard:sync": "node scripts/export-dashboard-state.mjs",
+    "dashboard": "node scripts/export-dashboard-state.mjs && npm --prefix dashboard run dev",
+    "dashboard:build": "node scripts/export-dashboard-state.mjs && npm --prefix dashboard run build",
+    "dashboard:preview": "npm --prefix dashboard run preview"
+  },
+  "keywords": [
+    "career",
+    "job-search",
+    "agents",
+    "resume",
+    "ats"
+  ],
+  "license": "Commercial"
+}

@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-07-09T05:47:48.207Z",
+  "candidate": {
+    "fullName": "Lorem Ipsum",
+    "headline": "Lorem ipsum professional headline"
+  },
+  "interface": {
+    "mode": "chat_only",
+    "dashboardEnabled": false,
+    "dashboardRole": "Visibility layer. Chat remains the control surface."
+  },
+  "stages": [
+    {
+      "number": "01",
+      "name": "Setup Orchestrator",
+      "status": "Complete",
+      "progress": 100
+    },
+    {
+      "number": "02",
+      "name": "Profile Builder",
+      "status": "In Progress",
+      "progress": 35
+    },
+    {
+      "number": "03",
+      "name": "Target Strategy",
+      "status": "Complete",
+      "progress": 100
+    },
+    {
+      "number": "04",
+      "name": "Opportunity Scout",
+      "status": "In Progress",
+      "progress": 72
+    },
+    {
+      "number": "05",
+      "name": "JD Analyst",
+      "status": "In Progress",
+      "progress": 55
+    },
+    {
+      "number": "06",
+      "name": "Match Scorer",
+      "status": "In Progress",
+      "progress": 50
+    },
+    {
+      "number": "07",
+      "name": "Resume Tailor",
+      "status": "Pending",
+      "progress": 0
+    },
+    {
+      "number": "08",
+      "name": "Application Assistant",
+      "status": "Pending",
+      "progress": 0
+    },
+    {
+      "number": "09",
+      "name": "Warm Path Builder",
+      "status": "In Progress",
+      "progress": 20
+    },
+    {
+      "number": "10",
+      "name": "Tracker And Follow-Up",
+      "status": "Pending",
+      "progress": 0
+    },
+    {
+      "number": "11",
+      "name": "Interview Prep",
+      "status": "Pending",
+      "progress": 0
+    },
+    {
+      "number": "12",
+      "name": "Learning Loop",
+      "status": "Pending",
+      "progress": 0
+    }
+  ],
+  "matches": [
+    {
+      "id": "pipeline-1",
+      "role": "Example Role",
+      "company": "Example Company",
+      "location": "Needs review",
+      "salary": "Needs review",
+      "ats": 70,
+      "cold": 30,
+      "warm": 45,
+      "status": "Pipeline",
+      "url": "https://example.com/job",
+      "color": "blue"
+    }
+  ],
+  "focus": {
+    "ats": 70,
+    "cold": 30,
+    "warm": 45,
+    "overall": "3.5",
+    "topPriority": "Review 1 role before drafting packets"
+  },
+  "resumePackets": [
+    {
+      "label": "Active Template",
+      "title": "Neutral Google Doc Template",
+      "state": "In Use",
+      "tone": "success"
+    },
+    {
+      "label": "Latest Tailored Resume",
+      "title": "Example Role - Example Company",
+      "state": "Open",
+      "tone": "default"
+    },
+    {
+      "label": "Approval Needed",
+      "title": "Review generated packets before submitting",
+      "state": "Review",
+      "tone": "warning"
+    }
+  ],
+  "warmPaths": [
+    {
+      "name": "Referral Contact",
+      "role": "Example Company warm path",
+      "request": "Referral Request",
+      "state": "Draft needed"
+    }
+  ],
+  "metrics": {
+    "applicationsSent": 0,
+    "interviews": 0,
+    "offerConversations": 0,
+    "profileViews": 0,
+    "weeklyGoalCurrent": 0,
+    "weeklyGoalTarget": 5
+  }
+}
