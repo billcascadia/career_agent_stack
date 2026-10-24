@@ -13,9 +13,15 @@ function readFirst(paths) {
   return "";
 }
 
+function unquote(raw) {
+  const trimmed = raw.trim();
+  const quoted = trimmed.match(/^"((?:[^"\\]|\\.)*)"$/);
+  return quoted ? quoted[1].replace(/\\(.)/g, "$1") : trimmed;
+}
+
 function value(text, key, fallback = "") {
-  const match = text.match(new RegExp(`^\\s*${key}:\\s*"?([^"\\n]*)"?\\s*$`, "m"));
-  return match ? match[1].trim() : fallback;
+  const match = text.match(new RegExp(`^\\s*${key}:[ \\t]*(.*?)[ \\t]*$`, "m"));
+  return match && match[1] ? unquote(match[1]) : fallback;
 }
 
 function boolValue(text, key, fallback = false) {
@@ -31,15 +37,24 @@ function listUnder(text, key) {
   for (let index = start + 1; index < lines.length; index += 1) {
     const line = lines[index];
     if (!line.startsWith("    ") && line.trim() && !line.trim().startsWith("-")) break;
-    const item = line.match(/^\s*-\s*"?([^"]*)"?\s*$/);
-    if (item && item[1]) items.push(item[1]);
+    const item = line.match(/^\s*-\s*(.*?)\s*$/);
+    if (item && unquote(item[1])) items.push(unquote(item[1]));
   }
   return items;
 }
 
+// Accepts "ATS 82 / Cold 15 / Warm 40" or positional "82% | 15% | 40%" (ATS, Cold, Warm).
 function parseScore(score) {
-  const numbers = String(score).match(/\d+/g);
-  if (!numbers) return {};
+  const text = String(score);
+  const labeled = {};
+  for (const key of ["ats", "cold", "warm"]) {
+    const match = text.match(new RegExp(`${key}[^\\d]*(\\d+)`, "i"));
+    if (match) labeled[key] = Number(match[1]);
+  }
+  if (Object.keys(labeled).length) return labeled;
+  const numbers = text.match(/\d+(?:\.\d+)?/g);
+  // Decimal or ratio scores like "4.2/5" are not percentages; leave them for manual review.
+  if (!numbers || numbers.some((number) => number.includes("."))) return {};
   if (numbers.length >= 3) {
     return {
       ats: Number(numbers[0]),
@@ -146,9 +161,9 @@ const matches = [...applications, ...pipeline]
     company: item.company,
     location: item.location || "Needs review",
     salary: item.salary || "Needs review",
-    ats: item.ats || 70,
-    cold: item.cold || 30,
-    warm: item.warm || 45,
+    ats: item.ats ?? 70,
+    cold: item.cold ?? 30,
+    warm: item.warm ?? 45,
     status: item.status || "New",
     url: item.url || "",
     color: ["blue", "violet", "teal", "orange"][index % 4]
@@ -193,10 +208,14 @@ const topMatches = matches.length ? matches : [
 ];
 
 const average = (key) => Math.round(topMatches.reduce((sum, item) => sum + Number(item[key] || 0), 0) / topMatches.length);
-const applied = applications.filter((app) => /applied|submitted/i.test(app.status)).length;
+const isApplied = (app) => /applied|submitted/i.test(app.status);
+const applied = applications.filter(isApplied).length;
+const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+const appliedThisWeek = applications.filter((app) => isApplied(app) && Date.parse(app.date) >= weekAgo).length;
 const interviews = applications.filter((app) => /interview/i.test(app.status)).length;
 const offers = applications.filter((app) => /offer/i.test(app.status)).length;
 const maxDaily = Number(value(preferencesText, "max_daily_applications", "5")) || 5;
+const weeklyGoal = Number(value(preferencesText, "weekly_application_goal", "")) || maxDaily * 5;
 const dashboardEnabled = boolValue(preferencesText, "dashboard_enabled", false);
 
 const state = {
@@ -228,8 +247,8 @@ const state = {
     interviews,
     offerConversations: offers,
     profileViews: 0,
-    weeklyGoalCurrent: Math.min(applied, maxDaily),
-    weeklyGoalTarget: maxDaily
+    weeklyGoalCurrent: appliedThisWeek,
+    weeklyGoalTarget: weeklyGoal
   }
 };
 

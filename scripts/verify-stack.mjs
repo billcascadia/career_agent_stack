@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 
 const root = process.cwd();
 const required = [
@@ -22,7 +23,6 @@ const dashboardRequired = [
   "dashboard/README.md",
   "dashboard/package.json",
   "dashboard/index.html",
-  "dashboard/public/dashboard-state.json",
   "dashboard/src/main.jsx",
   "dashboard/src/styles.css"
 ];
@@ -45,7 +45,74 @@ const localForbidden = fs.existsSync(localDenylistPath)
 
 const forbidden = [...defaultForbidden, ...localForbidden];
 
+// Files that are meant to hold the user's real details. They are gitignored, so the scan skips them.
+const privatePaths = [
+  "config/profile.yml",
+  "config/preferences.yml",
+  "config/private-denylist.local.txt",
+  "dashboard/public/dashboard-state.json"
+];
+const privateDirs = ["outputs"];
+
+function isPrivate(rel) {
+  const posix = rel.split(path.sep).join("/");
+  if (privatePaths.includes(posix)) return true;
+  if (privateDirs.some((dir) => posix.startsWith(`${dir}/`))) return true;
+  return /^reports\/.*\.private\.md$/.test(posix);
+}
+
+// Returns [name, data] for every entry in a zip-based file (.zip, .docx), so compressed contents are scanned too.
+function zipEntries(buffer) {
+  const entries = [];
+  let eocd = buffer.length - 22;
+  while (eocd >= 0 && buffer.readUInt32LE(eocd) !== 0x06054b50) eocd -= 1;
+  if (eocd < 0) return null;
+  const count = buffer.readUInt16LE(eocd + 10);
+  let offset = buffer.readUInt32LE(eocd + 16);
+  for (let index = 0; index < count; index += 1) {
+    if (buffer.readUInt32LE(offset) !== 0x02014b50) return null;
+    const method = buffer.readUInt16LE(offset + 10);
+    const compressedSize = buffer.readUInt32LE(offset + 20);
+    const nameLength = buffer.readUInt16LE(offset + 28);
+    const extraLength = buffer.readUInt16LE(offset + 30);
+    const commentLength = buffer.readUInt16LE(offset + 32);
+    const localOffset = buffer.readUInt32LE(offset + 42);
+    const name = buffer.toString("utf8", offset + 46, offset + 46 + nameLength);
+    const dataStart = localOffset + 30 + buffer.readUInt16LE(localOffset + 26) + buffer.readUInt16LE(localOffset + 28);
+    const raw = buffer.subarray(dataStart, dataStart + compressedSize);
+    const data = method === 8 ? zlib.inflateRawSync(raw) : raw;
+    entries.push([name, data]);
+    offset += 46 + nameLength + extraLength + commentLength;
+  }
+  return entries;
+}
+
 let errors = 0;
+
+function scan(label, data) {
+  // This script lists the placeholder tokens itself, including copies of it inside archives.
+  if (label.replaceAll("\\", "/").endsWith("scripts/verify-stack.mjs")) return;
+  const nested = /\.(zip|docx|xlsx|pptx)$/i.test(label) ? zipEntries(data) : null;
+  if (nested) {
+    for (const [name, entryData] of nested) scan(`${label} > ${name}`, entryData);
+  }
+  const text = data.toString("utf8");
+  for (const bad of forbidden) {
+    if (text.includes(bad)) {
+      console.error(`Forbidden private token found in ${label}: ${bad}`);
+      errors += 1;
+    }
+  }
+  if (nested) {
+    for (const [name] of nested) {
+      if (name.includes("\\")) {
+        console.error(`Archive entry uses backslash paths and will not unzip correctly on macOS or Linux: ${label} > ${name}`);
+        errors += 1;
+        break;
+      }
+    }
+  }
+}
 
 for (const rel of required) {
   const full = path.join(root, rel);
@@ -75,14 +142,8 @@ function walk(dir) {
       continue;
     }
     const rel = path.relative(root, full);
-    if (rel === path.join("scripts", "verify-stack.mjs")) continue;
-    const text = fs.readFileSync(full, "utf8");
-    for (const bad of forbidden) {
-      if (text.includes(bad)) {
-        console.error(`Forbidden private token found in ${rel}: ${bad}`);
-        errors += 1;
-      }
-    }
+    if (isPrivate(rel)) continue;
+    scan(rel.split(path.sep).join("/"), fs.readFileSync(full));
   }
 }
 

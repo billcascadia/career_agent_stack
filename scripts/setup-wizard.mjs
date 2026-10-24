@@ -19,9 +19,13 @@ function list(value) {
     .filter(Boolean);
 }
 
+function yamlString(value) {
+  return `"${String(value).replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
+}
+
 function yamlList(items, indent = 4) {
   if (!items.length) return `${" ".repeat(indent)}- ""`;
-  return items.map((item) => `${" ".repeat(indent)}- "${item.replaceAll('"', '\\"')}"`).join("\n");
+  return items.map((item) => `${" ".repeat(indent)}- ${yamlString(item)}`).join("\n");
 }
 
 function section(title, body) {
@@ -45,6 +49,19 @@ console.log("");
 console.log("You can use local files, Google Drive, or both.");
 console.log("The default resume template is included in this folder, so no external Drive access is required.");
 console.log("Blank answers are allowed. You can edit the generated files later.");
+
+const profilePath = path.join(root, "config", "profile.yml");
+const preferencesPath = path.join(root, "config", "preferences.yml");
+const existing = [profilePath, preferencesPath].filter((file) => fs.existsSync(file));
+if (existing.length) {
+  const names = existing.map((file) => path.relative(root, file)).join(" and ");
+  const overwrite = await ask(`${names} already exist. Overwrite with new answers? yes or no`, "no");
+  if (!overwrite.toLowerCase().startsWith("y")) {
+    console.log("No changes made. Edit the existing files directly, or rerun setup and answer yes to replace them.");
+    rl.close();
+    process.exit(0);
+  }
+}
 
 section("Agent Production Line", "Setup Orchestrator -> Profile Builder -> Target Strategy -> Opportunity Scout -> JD Analyst -> Match Scorer -> Resume Tailor -> Application Assistant -> Warm Path Builder -> Tracker And Follow-Up -> Interview Prep -> Learning Loop");
 
@@ -96,19 +113,19 @@ const maxDailyApplications = await ask("Maximum user-approved applications per d
 const allowAutoOutreachDrafts = await ask("Allow outreach drafts? yes or no", "yes");
 
 const profile = `candidate:
-  full_name: "${fullName}"
-  email: "${email}"
-  phone: "${phone}"
-  location: "${location}"
-  linkedin: "${linkedin}"
-  portfolio_url: "${portfolio}"
+  full_name: ${yamlString(fullName)}
+  email: ${yamlString(email)}
+  phone: ${yamlString(phone)}
+  location: ${yamlString(location)}
+  linkedin: ${yamlString(linkedin)}
+  portfolio_url: ${yamlString(portfolio)}
   github: ""
-  work_authorization: "${workAuth}"
+  work_authorization: ${yamlString(workAuth)}
 
 source_materials:
-  method: "${sourceMethod}"
-  location_or_notes: "${sourceLocation}"
-  verified_notes: "${verifiedNotes}"
+  method: ${yamlString(sourceMethod)}
+  location_or_notes: ${yamlString(sourceLocation)}
+  verified_notes: ${yamlString(verifiedNotes)}
   claims_to_avoid:
 ${yamlList(list(avoidClaims), 4)}
 
@@ -145,36 +162,37 @@ ${yamlList(list(avoidClaims), 4)}
 `;
 
 const preferences = `documents:
-  output_destination: "${outputDestination}"
+  output_destination: ${yamlString(outputDestination)}
   local_output_folder: "outputs"
   google_drive_enabled: ${outputDestination.includes("google") || outputDestination === "both"}
-  google_drive_folder_url: "${driveFolder}"
-  resume_template: "${templateChoice}"
+  google_drive_folder_url: ${yamlString(driveFolder)}
+  resume_template: ${yamlString(templateChoice)}
   fallback_markdown_template: "templates/resume-template-lorem.md"
   export_formats:
     - "google_doc"
     - "pdf"
 
 interface:
-  mode: "${interfaceMode}"
+  mode: ${yamlString(interfaceMode)}
   dashboard_enabled: ${interfaceMode === "dashboard_plus_chat"}
   dashboard_path: "dashboard"
   dashboard_notes: "Optional visual command center. Text chat remains the source of control."
 
 search:
-  cadence: "${cadence}"
-  remote_preference: "${remote}"
+  cadence: ${yamlString(cadence)}
+  remote_preference: ${yamlString(remote)}
   countries:
 ${yamlList(countries)}
   states_or_regions:
 ${yamlList(statesOrRegions)}
-  minimum_compensation: "${minimumComp}"
-  target_compensation: "${targetComp}"
-  employment_type: "${employmentType}"
+  minimum_compensation: ${yamlString(minimumComp)}
+  target_compensation: ${yamlString(targetComp)}
+  employment_type: ${yamlString(employmentType)}
   include_career_change_roles: ${includeCareerChange.toLowerCase().startsWith("y")}
   preferred_sources:
 ${yamlList(boards)}
   max_daily_applications: ${Number.parseInt(maxDailyApplications, 10) || 5}
+  weekly_application_goal: ${(Number.parseInt(maxDailyApplications, 10) || 5) * 5}
 
 approval_rules:
   allow_auto_search: true
@@ -189,8 +207,8 @@ scoring:
   prioritize_warm_path: true
 `;
 
-fs.writeFileSync(path.join(root, "config", "profile.yml"), profile);
-fs.writeFileSync(path.join(root, "config", "preferences.yml"), preferences);
+fs.writeFileSync(profilePath, profile);
+fs.writeFileSync(preferencesPath, preferences);
 
 console.log("");
 console.log("Setup complete.");
