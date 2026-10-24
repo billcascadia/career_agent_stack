@@ -4,6 +4,24 @@ A consumer-ready agentic career workflow for finding, evaluating, tailoring, tra
 
 This productized version is clean-room content. It contains no private candidate data, no personal application history, and no hardcoded personal Google Drive links. The user owns their profile, resume source, documents, and application decisions.
 
+## First Time? Start Here
+
+You need [Node.js](https://nodejs.org) version 18 or newer. To check, open a terminal and run `node --version`. If it prints a version number of 18 or higher, you are ready. If not, install the LTS version from nodejs.org.
+
+Then:
+
+1. Download this repository (green **Code** button, then **Download ZIP**) and unzip it, or clone it with git.
+2. Open a terminal in the `career-agent-stack` folder.
+3. Run `npm run setup` and answer the questions. Blank answers are fine; you can edit them later.
+4. Run `npm run verify` to check everything is in place.
+5. Open your AI assistant in this folder and say: `Read prompts/agent-orchestrator.md and help me run my career agent workflow.`
+
+Good to know:
+
+- Your answers are saved to `config/profile.yml` and `config/preferences.yml`. These stay on your computer and are excluded from git.
+- `setup/index.html` is an optional guide you can open in any browser. It explains the stack but does not save your setup; the terminal step does.
+- The dashboard is optional and shows placeholder numbers until you add real roles. See [Interface Modes](#interface-modes).
+
 ## What This Stack Is
 
 Career Agent Stack is an agent production line for a job search. It turns a user's verified career source material into a repeatable workflow:
@@ -89,6 +107,8 @@ Reviews which searches, resumes, titles, boards, and outreach paths are working,
 For the expanded operating model, see `docs/AGENT_PRODUCTION_LINE.md`.
 
 ## Quick Start
+
+Requires Node.js 18 or newer.
 
 1. Extract this folder anywhere on your computer.
 2. Open `setup/index.html` in a browser for the guided setup overview.
