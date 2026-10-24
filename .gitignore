@@ -1,0 +1,15 @@
+# Private user data: never commit
+config/profile.yml
+config/preferences.yml
+config/private-denylist.local.txt
+dashboard/public/dashboard-state.json
+outputs/
+reports/*.private.md
+.env
+
+# Build and OS files
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db

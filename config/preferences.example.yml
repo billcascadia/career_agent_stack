@@ -30,6 +30,7 @@ search:
     - "LinkedIn"
     - "Indeed"
   max_daily_applications: 5
+  weekly_application_goal: 25
 
 approval_rules:
   allow_auto_search: true
