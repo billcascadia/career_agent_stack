@@ -96,9 +96,9 @@ function scan(label, data) {
   if (nested) {
     for (const [name, entryData] of nested) scan(`${label} > ${name}`, entryData);
   }
-  const text = data.toString("utf8");
+  const text = data.toString("utf8").toLowerCase();
   for (const bad of forbidden) {
-    if (text.includes(bad)) {
+    if (text.includes(bad.toLowerCase())) {
       console.error(`Forbidden private token found in ${label}: ${bad}`);
       errors += 1;
     }
